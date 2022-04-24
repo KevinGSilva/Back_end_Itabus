@@ -24,29 +24,29 @@
             $id = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $id);
             $id = str_replace("'", "", $id);
 
+            $cpf = $_REQUEST['cpf'];
+            $cpf = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $cpf);
+            $cpf = str_replace("'", "", $cpf);
+
             try {
                 $sql = 'SELECT f.id, 
                                 f.nome,
                                 f.cpf,
                                 f.data_nascimento,
                                 f.matricula,
-                                f.senha_login,
-                                f.id_tipo_funcionario,
-                                tf.tipo as cargo
-                                from funcionario f
-                                inner join tipo_funcionario tf
-                                on f.id_tipo_funcionario = tf.id';
+                                f.senha_login
+                                from funcionario f';
 
+
+
+                #Aqui é se vc quiser procurar por id. Daí no front, ce vai mandar junto na url o id:
+                #...arquivo.php?id=${variavel_id}
                 if (isset($_REQUEST['id'])) {
                     $sql = $sql . ' where f.id = :id';
                     $result = $conn->prepare($sql);
                     $result->bindParam(':id', $id);
-                } else {
-                    $result = $conn->prepare($sql);
-                }
-
-                $result->execute();
-                $getFuncionario = $result->fetchAll();
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
 
                 foreach ($getFuncionario as $value) {
                     $id = $value['id'];
@@ -55,8 +55,6 @@
                     $data_nascimento = $value['data_nascimento'];
                     $matricula = $value['matricula'];
                     $senha_login = $value['senha_login'];
-                    $id_tipo_funcionario = $value['id_tipo_funcionario'];
-                    $cargo = $value['cargo'];
 
                     $json [] = [
                         "id" => $id,
@@ -64,12 +62,69 @@
                         "cpf" => $cpf,
                         "data_nascimento" => $data_nascimento,
                         "matricula" => $matricula,
-                        "senha_login" => $senha_login,
-                        "id_tipo_funcionario" => $id_tipo_funcionario,
-                        "cargo" => $cargo
+                        "senha_login" => $senha_login
                     ];
                 }
                 echo json_encode($json, JSON_PRETTY_PRINT);
+                } 
+                
+
+                #Aqui é se vc quiser fazer a requisicao pelo cpf. Pode servir como o email tbm, só trocar tudo onde tem cpf, por email.
+                #Daí no front, ce vai mandar junto na url o cpf:
+                ##...arquivo.php?id=${variavel_cpf}
+                else if(isset($_REQUEST['cpf'])) {
+                    $sql = $sql . ' where f.cpf = :cpf';
+                    $result = $conn->prepare($sql);
+                    $result->bindParam(':cpf', $cpf);
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                foreach ($getFuncionario as $value) {
+                    $id = $value['id'];
+                    $nome = $value['nome'];
+                    $cpf = $value['cpf'];
+                    $data_nascimento = $value['data_nascimento'];
+                    $matricula = $value['matricula'];
+                    $senha_login = $value['senha_login'];
+
+                    $json [] = [
+                        "id" => $id,
+                        "nome" => $nome,
+                        "cpf" => $cpf,
+                        "data_nascimento" => $data_nascimento,
+                        "matricula" => $matricula,
+                        "senha_login" => $senha_login
+                    ];
+                }
+                echo json_encode($json, JSON_PRETTY_PRINT);
+            } 
+
+            #Aqui restorna todos os objetos da tabela. Sem mandar nenhum parametro pela url
+            else {
+                    $result = $conn->prepare($sql);
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                foreach ($getFuncionario as $value) {
+                    $id = $value['id'];
+                    $nome = $value['nome'];
+                    $cpf = $value['cpf'];
+                    $data_nascimento = $value['data_nascimento'];
+                    $matricula = $value['matricula'];
+                    $senha_login = $value['senha_login'];
+
+                    $json [] = [
+                        "id" => $id,
+                        "nome" => $nome,
+                        "cpf" => $cpf,
+                        "data_nascimento" => $data_nascimento,
+                        "matricula" => $matricula,
+                        "senha_login" => $senha_login
+                    ];
+                }
+                echo json_encode($json, JSON_PRETTY_PRINT);
+            }
+
             } catch (PDOException  $e) {
                 echo 'ERRO getFuncionario ' . $e->getMessage();
             }

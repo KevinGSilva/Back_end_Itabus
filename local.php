@@ -1,7 +1,7 @@
 <?php
 include "conexao.php";
 
-header('content-type:application/json;charset=utf-8');
+header('content-type:text/html;charset=utf-8');
 date_default_timezone_set('America/Sao_Paulo');
 
 $http_origin = $_SERVER['HTTP_ORIGIN'];
@@ -39,7 +39,7 @@ switch ($method) {
                 $id = $value['id'];
                 $nome = $value['nome'];
 
-                $json [] = [
+                $json = [
                     "id" => $id,
                     "nome" => $nome
                 ];
