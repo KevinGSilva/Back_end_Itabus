@@ -43,14 +43,12 @@ switch ($method) {
                 $nome = $value['nome'];
                 $cpf = $value['cpf'];
                 $senha_login = $value['senha_login'];
-                $id_tipo_funcionario = $value['id_tipo_funcionario'];
 
                 $json [] = [
                     "id" => $id,
                     "nome" => $nome,
                     "cpf" => $cpf,
-                    "senha_login" => $senha_login,
-                    "id_tipo_funcionario" => $id_tipo_funcionario
+                    "senha_login" => $senha_login
                 ];
             }
 
@@ -89,8 +87,7 @@ switch ($method) {
         break;
 
     case 'PUT':
-        $data = $_REQUEST['data'];
-        $data = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $data);
+        $data = file_get_contents('php://input');
         $data = json_decode($data, true);
 
         $id = $data['id'];

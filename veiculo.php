@@ -80,8 +80,7 @@ switch ($method) {
         break;
 
     case 'PUT':
-        $data = $_REQUEST['data'];
-        $data = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $data);
+        $data = file_get_contents('php://input');
         $data = json_decode($data, true);
 
         $id = $data['id'];

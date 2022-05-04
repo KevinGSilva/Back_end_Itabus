@@ -23,6 +23,10 @@
             $id = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $id);
             $id = str_replace("'", "", $id);
 
+            $id_funcionario = $_REQUEST['id_funcionario'];
+            $id_funcionario = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $id_funcionario);
+            $id_funcionario = str_replace("'", "", $id_funcionario);
+
             try {
                 $sql = 'SELECT t.id,
                                 t.id_localidade_inicio,
@@ -54,11 +58,92 @@
                     $sql = $sql . ' where t.id = :id';
                     $result = $conn->prepare($sql);
                     $result->bindParam(':id', $id);
+
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                    foreach ($getFuncionario as $value) {
+                        $id = $value['id'];
+                        $id_localidade_inicio = $value['id_localidade_inicio'];
+                        $local_inicio = $value['local_inicio'];
+                        $id_localidade_fim = $value['id_localidade_inicio'];
+                        $local_fim = $value['local_fim'];
+                        $id_funcionario = $value['id_funcionario'];
+                        $funcionario = $value['funcionario'];
+                        $id_veiculo = $value['id_veiculo'];
+                        $veiculo = $value['veiculo'];
+                        $id_rastreador = $value['id_rastreador'];
+                        $latitude = $value['latitude'];
+                        $longitude = $value['longitude'];
+                        $horario_partida = $value['horario_partida'];
+                        $horario_chegada = $value['horario_chegada'];
+
+                        $json [] = [
+                            "id" => $id,
+                            "rota" => $local_inicio . ' - ' . $local_fim,
+                            "id_localidade_inicio" => $id_localidade_inicio,
+                            "local_inicio" => $local_inicio,
+                            "id_localidade_fim" => $id_localidade_fim,
+                            "local_fim" => $local_fim,
+                            "id_funcionario" => $id_funcionario,
+                            "funcionario" => $funcionario,
+                            "id_veiculo" => $id_veiculo,
+                            "veiculo" => $veiculo,
+                            "id_rastreador" => $id_rastreador,
+                            "latitude" => $latitude,
+                            "longitude" => $longitude,
+                            "horario_partida" => $horario_partida,
+                            "horario_chegada" => $horario_chegada
+                        ];
+                    }
+                    echo json_encode($json, JSON_PRETTY_PRINT);
+                }else if (isset($_REQUEST['id_funcionario'])) {
+                    $sql = $sql . ' where t.id_funcionario = :id_funcionario';
+                    $result = $conn->prepare($sql);
+                    $result->bindParam(':id_funcionario', $id_funcionario);
+
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                    foreach ($getFuncionario as $value) {
+                        $id = $value['id'];
+                        $id_localidade_inicio = $value['id_localidade_inicio'];
+                        $local_inicio = $value['local_inicio'];
+                        $id_localidade_fim = $value['id_localidade_inicio'];
+                        $local_fim = $value['local_fim'];
+                        $id_funcionario = $value['id_funcionario'];
+                        $funcionario = $value['funcionario'];
+                        $id_veiculo = $value['id_veiculo'];
+                        $veiculo = $value['veiculo'];
+                        $id_rastreador = $value['id_rastreador'];
+                        $latitude = $value['latitude'];
+                        $longitude = $value['longitude'];
+                        $horario_partida = $value['horario_partida'];
+                        $horario_chegada = $value['horario_chegada'];
+
+                        $json [] = [
+                            "id" => $id,
+                            "rota" => $local_inicio . ' - ' . $local_fim,
+                            "id_localidade_inicio" => $id_localidade_inicio,
+                            "local_inicio" => $local_inicio,
+                            "id_localidade_fim" => $id_localidade_fim,
+                            "local_fim" => $local_fim,
+                            "id_funcionario" => $id_funcionario,
+                            "funcionario" => $funcionario,
+                            "id_veiculo" => $id_veiculo,
+                            "veiculo" => $veiculo,
+                            "id_rastreador" => $id_rastreador,
+                            "latitude" => $latitude,
+                            "longitude" => $longitude,
+                            "horario_partida" => $horario_partida,
+                            "horario_chegada" => $horario_chegada
+                        ];
+                    }
+                    echo json_encode($json, JSON_PRETTY_PRINT);
+
                 } else {
                     $result = $conn->prepare($sql);
-                }
-
-                $result->execute();
+                    $result->execute();
                 $getFuncionario = $result->fetchAll();
 
                 foreach ($getFuncionario as $value) {
@@ -96,6 +181,9 @@
                     ];
                 }
                 echo json_encode($json, JSON_PRETTY_PRINT);
+                }
+
+                
             } catch (PDOException  $e) {
                 echo 'ERRO getFuncionario ' . $e->getMessage();
             }
@@ -214,8 +302,7 @@
                     echo $id;
                 }
             }catch (PDOException $e) {
-                echo 'ERROR: ' . $e->getMessage();
-                echo 'SQL deleteFuncionario';
+                echo false;
             }
             break;
     }

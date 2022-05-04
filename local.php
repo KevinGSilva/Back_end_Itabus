@@ -1,7 +1,7 @@
 <?php
 include "conexao.php";
 
-header('content-type:text/html;charset=utf-8');
+header('content-type:application/json;charset=utf-8');
 date_default_timezone_set('America/Sao_Paulo');
 
 $http_origin = $_SERVER['HTTP_ORIGIN'];
@@ -28,10 +28,8 @@ switch ($method) {
                 $sql = $sql . ' where id = :id';
                 $result = $conn->prepare($sql);
                 $result->bindParam(':id', $id);
-            }else {
-                $result = $conn->prepare($sql);
-            }
-            $result->execute();
+
+                $result->execute();
 
             $getLocal = $result->fetchAll();
 
@@ -46,6 +44,25 @@ switch ($method) {
             }
 
             echo json_encode($json, JSON_PRETTY_PRINT);
+            }else {
+                $result = $conn->prepare($sql);
+                $result->execute();
+
+            $getLocal = $result->fetchAll();
+
+            foreach ($getLocal as $value) {
+                $id = $value['id'];
+                $nome = $value['nome'];
+
+                $json [] = [
+                    "id" => $id,
+                    "nome" => $nome
+                ];
+            }
+
+            echo json_encode($json, JSON_PRETTY_PRINT);
+            }
+            
         } catch (PDOException $e) {
             echo 'ERRO getLocalidade';
         }
@@ -81,12 +98,13 @@ switch ($method) {
         break;
 
     case 'PUT':
-        $id = $_REQUEST['id'];
-        $id = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $id);
+        $data = file_get_contents('php://input');
+        $data = json_decode($data, true);
+
+        $id = $data['id'];
         $id = str_replace("'", "", $id);
 
-        $nome = $_REQUEST['nome'];
-        $nome = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $nome);
+        $nome = $data['nome'];
         $nome = str_replace("'", "", $nome);
 
 
@@ -101,7 +119,7 @@ switch ($method) {
                     $result->execute();
 
                 } catch (PDOException $e) {
-                    echo 'ERRO putLocalidade';
+                    echo 'ERRO putLocalidade' . $e;
                 }
             }
         }
@@ -126,8 +144,7 @@ switch ($method) {
                 echo $id;
             }
         }catch (PDOException $e) {
-            echo 'ERROR: ' . $e->getMessage();
-            echo 'SQL deleteLocalidade';
+            echo false;
         }
         break;
 }

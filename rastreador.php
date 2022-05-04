@@ -180,8 +180,7 @@ switch ($method) {
                 echo $id;
             }
         }catch (PDOException $e) {
-            echo 'ERROR: ' . $e->getMessage();
-            echo 'SQL deleteRastreador';
+            echo false;
         }
         break;
 }

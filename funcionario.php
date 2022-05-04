@@ -1,7 +1,7 @@
 <?php
     include "conexao.php";
 
-    header('content-type:text/html;charset=utf-8');
+    header('content-type:application/json;charset=utf-8');
     date_default_timezone_set('America/Sao_Paulo');
     
     $http_origin = $_SERVER['HTTP_ORIGIN'];
@@ -29,6 +29,7 @@
                                 f.cpf,
                                 f.data_nascimento,
                                 f.matricula,
+                                f.senha_login,
                                 f.id_tipo_funcionario,
                                 tf.tipo as cargo
                                 from funcionario f
@@ -39,33 +40,65 @@
                     $sql = $sql . ' where f.id = :id';
                     $result = $conn->prepare($sql);
                     $result->bindParam(':id', $id);
+
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                    foreach ($getFuncionario as $value) {
+                        $id = $value['id'];
+                        $nome = $value['nome'];
+                        $cpf = $value['cpf'];
+                        $data_nascimento = $value['data_nascimento'];
+                        $matricula = $value['matricula'];
+                        $senha_login = $value['senha_login'];
+                        $id_tipo_funcionario = $value['id_tipo_funcionario'];
+                        $cargo = $value['cargo'];
+
+                        $json [] = [
+                            "id" => $id,
+                            "nome" => $nome,
+                            "cpf" => $cpf,
+                            "data_nascimento" => $data_nascimento,
+                            "matricula" => $matricula,
+                            "senha_login" => $senha_login,
+                            "id_tipo_funcionario" => $id_tipo_funcionario,
+                            "cargo" => $cargo
+                        ];
+                    }
+                    echo json_encode($json, JSON_PRETTY_PRINT);
                 } else {
                     $result = $conn->prepare($sql);
+
+                    $sql = $sql . ' ORDER BY nome asc';
+                    $result = $conn->prepare($sql);
+                    $result->bindParam(':id', $id);
+
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                    foreach ($getFuncionario as $value) {
+                        $id = $value['id'];
+                        $nome = $value['nome'];
+                        $cpf = $value['cpf'];
+                        $data_nascimento = $value['data_nascimento'];
+                        $matricula = $value['matricula'];
+                        $id_tipo_funcionario = $value['id_tipo_funcionario'];
+                        $cargo = $value['cargo'];
+
+                        $json [] = [
+                            "id" => $id,
+                            "nome" => $nome,
+                            "cpf" => $cpf,
+                            "data_nascimento" => $data_nascimento,
+                            "matricula" => $matricula,
+                            "id_tipo_funcionario" => $id_tipo_funcionario,
+                            "cargo" => $cargo
+                        ];
+                    }
+                    echo json_encode($json, JSON_PRETTY_PRINT);
                 }
 
-                $result->execute();
-                $getFuncionario = $result->fetchAll();
-
-                foreach ($getFuncionario as $value) {
-                    $id = $value['id'];
-                    $nome = $value['nome'];
-                    $cpf = $value['cpf'];
-                    $data_nascimento = $value['data_nascimento'];
-                    $matricula = $value['matricula'];
-                    $id_tipo_funcionario = $value['id_tipo_funcionario'];
-                    $cargo = $value['cargo'];
-
-                    $json [] = [
-                        "id" => $id,
-                        "nome" => $nome,
-                        "cpf" => $cpf,
-                        "data_nascimento" => $data_nascimento,
-                        "matricula" => $matricula,
-                        "id_tipo_funcionario" => $id_tipo_funcionario,
-                        "cargo" => $cargo
-                    ];
-                }
-                echo json_encode($json, JSON_PRETTY_PRINT);
+                
             } catch (PDOException  $e) {
                 echo 'ERRO getFuncionario ' . $e->getMessage();
             }
@@ -73,7 +106,6 @@
 
         case 'POST':
             $data = file_get_contents('php://input');
-            $data = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $data);
             $data = json_decode($data, true);
 
             $nome = $data['nome'];
@@ -86,7 +118,6 @@
 
             $data_nascimento = $data['data_nascimento'];
             $data_nascimento = str_replace("'", "", $data_nascimento);
-            $data_nascimento = str_replace("/", "-", $data_nascimento);
 
             $matricula = $data['matricula'];
             $matricula = str_replace("'", "", $matricula);
@@ -124,8 +155,7 @@
             break;
         
         case 'PUT':
-            $data = $_REQUEST['data'];
-            $data = preg_replace('/(from|select|insert|delete|where|drop table|show tables|#|\*|--|\\\\)/', '', $data);
+            $data = file_get_contents('php://input');
             $data = json_decode($data, true);
 
             $id = $data['id'];
@@ -184,8 +214,7 @@
                     echo $id;
                 }
             }catch (PDOException $e) {
-                echo 'ERROR: ' . $e->getMessage();
-                echo 'SQL deleteFuncionario';
+                echo false;
             }
             break;
     }
