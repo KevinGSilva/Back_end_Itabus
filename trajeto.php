@@ -3,15 +3,11 @@
 
     header('content-type:text/html;charset=utf-8');
     date_default_timezone_set('America/Sao_Paulo');
-    
-    $http_origin = $_SERVER['HTTP_ORIGIN'];
-    
-    if ($http_origin == "http://localhost:3000") {
-        header("Access-Control-Allow-Origin: " . $http_origin);
+
+        header("Access-Control-Allow-Origin: *");
         header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
         header('Access-Control-Max-Age: 1000');
         header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-    }
     
     $method = $_SERVER['REQUEST_METHOD'];
     
