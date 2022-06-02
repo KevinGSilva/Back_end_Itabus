@@ -23,8 +23,12 @@
                 $sql = 'SELECT t.id,
                                 t.id_localidade_inicio,
                                 l.nome as local_inicio,
+                                l.latitude as local_ini_lat,
+                                l.longitude as local_ini_long,
                                 t.id_localidade_fim,
                                 lf.nome as local_fim,
+                                lf.latitude as local_fim_lat,
+                                lf.longitude as local_fim_long,
                                 t.id_funcionario,
                                 f.nome as funcionario,
                                 t.id_veiculo,
@@ -51,48 +55,107 @@
                     $sql = $sql . ' and t.id = :id';
                     $result = $conn->prepare($sql);
                     $result->bindParam(':id', $id);
+
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                    foreach ($getFuncionario as $value) {
+                        $id = $value['id'];
+                        $id_localidade_inicio = $value['id_localidade_inicio'];
+                        $local_inicio = $value['local_inicio'];
+                        $local_inicio_lat = $value['local_ini_lat'];
+                        $local_inicio_long = $value['local_ini_long'];
+                        $id_localidade_fim = $value['id_localidade_fim'];
+                        $local_fim_lat = $value['local_fim_lat'];
+                        $local_fim_long = $value['local_fim_long'];
+                        $local_fim = $value['local_fim'];
+                        $id_funcionario = $value['id_funcionario'];
+                        $funcionario = $value['funcionario'];
+                        $id_veiculo = $value['id_veiculo'];
+                        $veiculo = $value['veiculo'];
+                        $id_rastreador = $value['id_rastreador'];
+                        $latitude = $value['latitude'];
+                        $longitude = $value['longitude'];
+                        $horario_partida = $value['horario_partida'];
+                        $horario_chegada = $value['horario_chegada'];
+
+                        $json = [
+                            "id" => $id,
+                            "rota" => $local_inicio . ' - ' . $local_fim,
+                            "id_localidade_inicio" => $id_localidade_inicio,
+                            "local_inicio" => $local_inicio,
+                            "local_ini_lat" => $local_inicio_lat,
+                            "local_ini_long" => $local_inicio_long,
+                            "id_localidade_fim" => $id_localidade_fim,
+                            "local_fim" => $local_fim,
+                            "local_fim_lat" => $local_fim_lat,
+                            "local_fim_long" => $local_fim_long,
+                            "id_funcionario" => $id_funcionario,
+                            "funcionario" => $funcionario,
+                            "id_veiculo" => $id_veiculo,
+                            "veiculo" => $veiculo,
+                            "id_rastreador" => $id_rastreador,
+                            "latitude" => $latitude,
+                            "longitude" => $longitude,
+                            "horario_partida" => $horario_partida,
+                            "horario_chegada" => $horario_chegada
+                        ];
+                    }
+
+                    echo json_encode($json, JSON_FORCE_OBJECT);
+
                 } else {
                     $result = $conn->prepare($sql);
+                
+
+                    $result->execute();
+                    $getFuncionario = $result->fetchAll();
+
+                    foreach ($getFuncionario as $value) {
+                        $id = $value['id'];
+                        $id_localidade_inicio = $value['id_localidade_inicio'];
+                        $local_inicio = $value['local_inicio'];
+                        $local_inicio_lat = $value['local_ini_lat'];
+                        $local_inicio_long = $value['local_ini_long'];
+                        $id_localidade_fim = $value['id_localidade_fim'];
+                        $local_fim_lat = $value['local_fim_lat'];
+                        $local_fim_long = $value['local_fim_long'];
+                        $local_fim = $value['local_fim'];
+                        $id_funcionario = $value['id_funcionario'];
+                        $funcionario = $value['funcionario'];
+                        $id_veiculo = $value['id_veiculo'];
+                        $veiculo = $value['veiculo'];
+                        $id_rastreador = $value['id_rastreador'];
+                        $latitude = $value['latitude'];
+                        $longitude = $value['longitude'];
+                        $horario_partida = $value['horario_partida'];
+                        $horario_chegada = $value['horario_chegada'];
+
+                        $json = [
+                            "id" => $id,
+                            "rota" => $local_inicio . ' - ' . $local_fim,
+                            "id_localidade_inicio" => $id_localidade_inicio,
+                            "local_inicio" => $local_inicio,
+                            "local_ini_lat" => $local_inicio_lat,
+                            "local_ini_long" => $local_inicio_long,
+                            "id_localidade_fim" => $id_localidade_fim,
+                            "local_fim" => $local_fim,
+                            "local_fim_lat" => $local_fim_lat,
+                            "local_fim_long" => $local_fim_long,
+                            "id_funcionario" => $id_funcionario,
+                            "funcionario" => $funcionario,
+                            "id_veiculo" => $id_veiculo,
+                            "veiculo" => $veiculo,
+                            "id_rastreador" => $id_rastreador,
+                            "latitude" => $latitude,
+                            "longitude" => $longitude,
+                            "horario_partida" => $horario_partida,
+                            "horario_chegada" => $horario_chegada
+                        ];
+                    }
+
+                    echo json_encode($json, JSON_FORCE_OBJECT);
                 }
-
-                $result->execute();
-                $getFuncionario = $result->fetchAll();
-
-                foreach ($getFuncionario as $value) {
-                    $id = $value['id'];
-                    $id_localidade_inicio = $value['id_localidade_inicio'];
-                    $local_inicio = $value['local_inicio'];
-                    $id_localidade_fim = $value['id_localidade_inicio'];
-                    $local_fim = $value['local_fim'];
-                    $id_funcionario = $value['id_funcionario'];
-                    $funcionario = $value['funcionario'];
-                    $id_veiculo = $value['id_veiculo'];
-                    $veiculo = $value['veiculo'];
-                    $id_rastreador = $value['id_rastreador'];
-                    $latitude = $value['latitude'];
-                    $longitude = $value['longitude'];
-                    $horario_partida = $value['horario_partida'];
-                    $horario_chegada = $value['horario_chegada'];
-
-                    $json = [
-                        "id" => $id,
-                        "rota" => $local_inicio . ' - ' . $local_fim,
-                        "id_localidade_inicio" => $id_localidade_inicio,
-                        "local_inicio" => $local_inicio,
-                        "id_localidade_fim" => $id_localidade_fim,
-                        "local_fim" => $local_fim,
-                        "id_funcionario" => $id_funcionario,
-                        "funcionario" => $funcionario,
-                        "id_veiculo" => $id_veiculo,
-                        "veiculo" => $veiculo,
-                        "id_rastreador" => $id_rastreador,
-                        "latitude" => $latitude,
-                        "longitude" => $longitude,
-                        "horario_partida" => $horario_partida,
-                        "horario_chegada" => $horario_chegada
-                    ];
-                }
-                echo json_encode($json, JSON_FORCE_OBJECT);
             } catch (PDOException  $e) {
                 echo 'ERRO getFuncionario ' . $e->getMessage();
             }

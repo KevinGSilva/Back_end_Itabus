@@ -71,18 +71,28 @@ switch ($method) {
         $nome = $data['nome'];
         $nome = str_replace("'", "", $nome);
 
+        $latitude = $data['latitude'];
+        $latitude = str_replace("'", "", $latitude);
+
+        $longitude = $data['longitude'];
+        $longitude = str_replace("'", "", $longitude);
+
         try {
 
-            $sql = "INSERT INTO localidade values (null, :nome)";
+            $sql = "INSERT INTO localidade values (null, :nome, :latitude, :longitude)";
 
             $result = $conn->prepare($sql);
             $result->bindParam(':nome', $nome);
+            $result->bindParam(':latitude', $latitude);
+            $result->bindParam(':longitude', $longitude);
             $result->execute();
 
             $id = $conn->lastInsertId();
             $json_post = [
                 "id" => $id,
-                "nome"=> $nome
+                "nome"=> $nome,
+                "latitude" => $latitude,
+                "longitude" => $longitude
             ];
 
             echo json_encode($json_post, JSON_PRETTY_PRINT);
