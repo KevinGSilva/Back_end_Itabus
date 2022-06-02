@@ -18,10 +18,10 @@ switch ($method) {
         $id = str_replace("'", "", $id);
 
         try {
-            $sql = 'SELECT id, latitude, longitude, horario_gps, observacao, situacao from rastreador where situacao = 0';
+            $sql = 'SELECT id, latitude, longitude, horario_gps, observacao, situacao from rastreador';
 
             if(isset($_REQUEST['id'])) {
-                $sql = $sql . ' and id = :id';
+                $sql = $sql . ' where id = :id';
                 $result = $conn->prepare($sql);
                 $result->bindParam(':id', $id);
             }else {

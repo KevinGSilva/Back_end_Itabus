@@ -83,7 +83,7 @@
 
                         $json [] = [
                             "id" => $id,
-                            "nome" => $nome,
+                            "nome" => $nome . ' - ' . $matricula,
                             "cpf" => $cpf,
                             "data_nascimento" => $data_nascimento,
                             "matricula" => $matricula,

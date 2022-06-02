@@ -1,7 +1,7 @@
 <?php
     include "conexao.php";
 
-    header('content-type:text/html;charset=utf-8');
+    header('content-type:application/json;charset=utf-8');
     date_default_timezone_set('America/Sao_Paulo');
 
         header("Access-Control-Allow-Origin: *");
@@ -138,6 +138,7 @@
                     echo json_encode($json, JSON_PRETTY_PRINT);
 
                 } else {
+                    $sql = $sql . ' where r.situacao = 1';
                     $result = $conn->prepare($sql);
                     $result->execute();
                 $getFuncionario = $result->fetchAll();

@@ -24,24 +24,61 @@ switch ($method) {
                 $sql = $sql . ' where id = :id';
                 $result = $conn->prepare($sql);
                 $result->bindParam(':id', $id);
+                $result->execute();
+
+                $getLocal = $result->fetchAll();
+
+                foreach ($getLocal as $value) {
+                    $id_veiculo = $value['id'];
+                    $placa = $value['placa'];
+
+                    $sql2 = 'select count(id_veiculo) as rotas from trajeto where id_veiculo = :id_veiculo';
+                    $result2 = $conn->prepare($sql2);
+                    $result2->bindParam(':id_veiculo', $id_veiculo);
+                    $result2->execute();
+
+                    $getTrajetoVeiculo = $result2->fetchAll();
+
+                    foreach($getTrajetoVeiculo as $value){
+                        $rotas_usadas = $value['rotas'];
+                    }
+
+                    if($rotas_usadas == 0 || $rotas_usadas == ''){ 
+                        $json [] = [
+                            "id" => $id,
+                            "placa" => $placa,
+                            "rotas" => '0'
+                        ];
+                    } else{
+                        $json [] = [
+                            "id" => $id,
+                            "placa" => $placa,
+                            "rotas" =>  $rotas_usadas
+                        ];
+                    }
+                    
+                }
+
+                echo json_encode($json, JSON_PRETTY_PRINT);
             }else {
                 $result = $conn->prepare($sql);
+                $result->execute();
+
+                $getLocal = $result->fetchAll();
+
+                foreach ($getLocal as $value) {
+                    $id = $value['id'];
+                    $placa = $value['placa'];
+
+                    $json [] = [
+                        "id" => $id,
+                        "placa" => $placa
+                    ];
+                }
+
+                echo json_encode($json, JSON_PRETTY_PRINT);
             }
-            $result->execute();
-
-            $getLocal = $result->fetchAll();
-
-            foreach ($getLocal as $value) {
-                $id = $value['id'];
-                $placa = $value['placa'];
-
-                $json [] = [
-                    "id" => $id,
-                    "placa" => $placa
-                ];
-            }
-
-            echo json_encode($json, JSON_PRETTY_PRINT);
+            
         } catch (PDOException $e) {
             echo 'ERRO getVeiculo';
         }
