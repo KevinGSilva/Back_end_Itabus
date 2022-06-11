@@ -51,7 +51,7 @@ switch ($method) {
 
             echo json_encode($json, JSON_PRETTY_PRINT);
         } catch (PDOException $e) {
-            echo 'ERRO getRastreador';
+            echo 'ERRO getRastreador: ' . $e -> getMessage();
         }
         break;
 
